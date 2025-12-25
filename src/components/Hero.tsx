@@ -33,7 +33,7 @@ export default function Hero() {
           {/* Description */}
           <p className="max-w-2xl mx-auto text-xl text-gray-600 dark:text-gray-400">
             A minimalist, elegant, and modern starting point for your next project.
-            Built with Next.js 15, TypeScript, and Tailwind CSS.
+            Built with Next.js 16, TypeScript, and Tailwind CSS.
           </p>
 
           {/* CTA Buttons */}

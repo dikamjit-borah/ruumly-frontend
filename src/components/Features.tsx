@@ -3,7 +3,7 @@ export default function Features() {
     {
       icon: "⚡",
       title: "Lightning Fast",
-      description: "Built with Next.js 15 for optimal performance and speed",
+      description: "Built with Next.js 16 for optimal performance and speed",
     },
     {
       icon: "🎨",
