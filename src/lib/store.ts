@@ -3,11 +3,12 @@
  */
 
 import { create } from 'zustand';
-import { Room, Tenant, RentPayment } from './types';
+import { Property, Room, Tenant, RentPayment } from './types';
 import { generateId, calculateDashboardStats } from './utils';
 
 export interface PropertyStore {
   // Data
+  properties: Property[];
   rooms: Room[];
   tenants: Tenant[];
   rentPayments: RentPayment[];
@@ -15,10 +16,13 @@ export interface PropertyStore {
   // UI State
   isLoading: boolean;
   error: string | null;
+  selectedProperty: Property | null;
   selectedRoom: Room | null;
   selectedTenant: Tenant | null;
 
   // Modal States
+  showAddPropertyModal: boolean;
+  showEditPropertyModal: boolean;
   showAddRoomModal: boolean;
   showEditRoomModal: boolean;
   showAddTenantModal: boolean;
@@ -28,6 +32,13 @@ export interface PropertyStore {
   // Filter & Search
   searchTerm: string;
   filterStatus: string;
+  selectedPropertyId: string | null;
+
+  // Actions - Properties
+  addProperty: (property: Omit<Property, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  updateProperty: (id: string, property: Partial<Property>) => void;
+  deleteProperty: (id: string) => void;
+  setProperties: (properties: Property[]) => void;
 
   // Actions - Rooms
   addRoom: (room: Omit<Room, 'id' | 'createdAt' | 'updatedAt'>) => void;
@@ -48,6 +59,8 @@ export interface PropertyStore {
   setRentPayments: (payments: RentPayment[]) => void;
 
   // Modal Actions
+  setShowAddPropertyModal: (show: boolean) => void;
+  setShowEditPropertyModal: (show: boolean) => void;
   setShowAddRoomModal: (show: boolean) => void;
   setShowEditRoomModal: (show: boolean) => void;
   setShowAddTenantModal: (show: boolean) => void;
@@ -55,8 +68,10 @@ export interface PropertyStore {
   setShowMarkPaidModal: (show: boolean) => void;
 
   // Selection Actions
+  setSelectedProperty: (property: Property | null) => void;
   setSelectedRoom: (room: Room | null) => void;
   setSelectedTenant: (tenant: Tenant | null) => void;
+  setSelectedPropertyId: (id: string | null) => void;
 
   // Search & Filter
   setSearchTerm: (term: string) => void;
@@ -69,13 +84,17 @@ export interface PropertyStore {
 }
 
 const initialState = {
+  properties: [],
   rooms: [],
   tenants: [],
   rentPayments: [],
   isLoading: false,
   error: null,
+  selectedProperty: null,
   selectedRoom: null,
   selectedTenant: null,
+  showAddPropertyModal: false,
+  showEditPropertyModal: false,
   showAddRoomModal: false,
   showEditRoomModal: false,
   showAddTenantModal: false,
@@ -83,10 +102,42 @@ const initialState = {
   showMarkPaidModal: false,
   searchTerm: '',
   filterStatus: '',
+  selectedPropertyId: null,
 };
 
 export const usePropertyStore = create<PropertyStore>((set) => ({
   ...initialState,
+
+  // Property Actions
+  addProperty: (property) =>
+    set((state) => ({
+      properties: [
+        ...state.properties,
+        {
+          ...property,
+          id: generateId(),
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        } as Property,
+      ],
+    })),
+
+  updateProperty: (id, updates) =>
+    set((state) => ({
+      properties: state.properties.map((property) =>
+        property.id === id ? { ...property, ...updates, updatedAt: new Date() } : property
+      ),
+    })),
+
+  deleteProperty: (id) =>
+    set((state) => ({
+      properties: state.properties.filter((property) => property.id !== id),
+      rooms: state.rooms.filter((room) => room.propertyId !== id),
+      tenants: state.tenants.filter((tenant) => tenant.propertyId !== id),
+      rentPayments: state.rentPayments.filter((payment) => payment.propertyId !== id),
+    })),
+
+  setProperties: (properties) => set({ properties }),
 
   // Room Actions
   addRoom: (room) =>
@@ -199,6 +250,8 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
   setRentPayments: (payments) => set({ rentPayments: payments }),
 
   // Modal Actions
+  setShowAddPropertyModal: (show) => set({ showAddPropertyModal: show }),
+  setShowEditPropertyModal: (show) => set({ showEditPropertyModal: show }),
   setShowAddRoomModal: (show) => set({ showAddRoomModal: show }),
   setShowEditRoomModal: (show) => set({ showEditRoomModal: show }),
   setShowAddTenantModal: (show) => set({ showAddTenantModal: show }),
@@ -206,8 +259,10 @@ export const usePropertyStore = create<PropertyStore>((set) => ({
   setShowMarkPaidModal: (show) => set({ showMarkPaidModal: show }),
 
   // Selection Actions
+  setSelectedProperty: (property) => set({ selectedProperty: property }),
   setSelectedRoom: (room) => set({ selectedRoom: room }),
   setSelectedTenant: (tenant) => set({ selectedTenant: tenant }),
+  setSelectedPropertyId: (id) => set({ selectedPropertyId: id }),
 
   // Search & Filter
   setSearchTerm: (term) => set({ searchTerm: term }),

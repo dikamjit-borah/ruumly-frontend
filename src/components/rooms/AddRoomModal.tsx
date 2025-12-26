@@ -9,10 +9,12 @@ import { Input } from '@/components/ui/Input';
 import { RoomSchema, RoomFormData } from '@/lib/validations';
 import { usePropertyStore } from '@/lib/store';
 import { useRooms } from '@/hooks/useRooms';
+import { useProperties } from '@/hooks/useProperties';
 
 export function AddRoomModal() {
-  const { showAddRoomModal, setShowAddRoomModal } = usePropertyStore();
+  const { showAddRoomModal, setShowAddRoomModal, selectedPropertyId } = usePropertyStore();
   const { addRoom } = useRooms();
+  const { properties } = useProperties();
   const {
     register,
     handleSubmit,
@@ -30,6 +32,7 @@ export function AddRoomModal() {
       rentAmount: data.rentAmount,
       floor: data.floor,
       amenities: data.amenities,
+      propertyId: selectedPropertyId || properties[0]?.id || '',
     });
     reset();
     setShowAddRoomModal(false);
@@ -45,6 +48,22 @@ export function AddRoomModal() {
       title="Add New Room"
     >
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Property *</label>
+          <select
+            {...register('propertyId', { required: 'Property is required' })}
+            defaultValue={selectedPropertyId || ''}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select a property</option>
+            {properties.map(prop => (
+              <option key={prop.id} value={prop.id}>
+                {prop.name} ({prop.totalRooms} rooms)
+              </option>
+            ))}
+          </select>
+        </div>
+
         <Input
           label="Room Number"
           placeholder="e.g., 101"

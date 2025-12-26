@@ -2,7 +2,7 @@
  * Utility functions for common operations
  */
 
-import { Room, Tenant, RentPayment, DashboardStats } from './types';
+import { Property, Room, Tenant, RentPayment, DashboardStats } from './types';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -47,10 +47,12 @@ export function formatDateToInput(date: Date | string): string {
  * Calculate dashboard statistics from data
  */
 export function calculateDashboardStats(
+  properties: Property[],
   rooms: Room[],
   tenants: Tenant[],
   rentPayments: RentPayment[]
 ): DashboardStats {
+  const safeRentPayments = rentPayments || [];
   const occupiedRooms = rooms.filter(r => r.status === 'occupied').length;
   const availableRooms = rooms.filter(r => r.status === 'available').length;
   const maintenanceRooms = rooms.filter(r => r.status === 'maintenance').length;
@@ -60,12 +62,13 @@ export function calculateDashboardStats(
     .reduce((sum, room) => sum + room.rentAmount, 0);
 
   const now = new Date();
-  const pendingPayments = rentPayments.filter(p => p.status === 'pending').length;
-  const overduePayments = rentPayments.filter(
+  const pendingPayments = safeRentPayments.filter(p => p.status === 'pending').length;
+  const overduePayments = safeRentPayments.filter(
     p => p.status === 'overdue' && new Date(p.dueDate) < now
   ).length;
 
   return {
+    totalProperties: properties.length,
     totalRooms: rooms.length,
     occupiedRooms,
     availableRooms,
@@ -76,6 +79,13 @@ export function calculateDashboardStats(
     pendingPayments,
     overduePayments,
   };
+}
+
+/**
+ * Get property by ID
+ */
+export function getPropertyById(properties: Property[], id: string): Property | undefined {
+  return properties.find(property => property.id === id);
 }
 
 /**
@@ -90,6 +100,20 @@ export function getRoomById(rooms: Room[], id: string): Room | undefined {
  */
 export function getTenantById(tenants: Tenant[], id: string): Tenant | undefined {
   return tenants.find(tenant => tenant.id === id);
+}
+
+/**
+ * Get rooms by property ID
+ */
+export function getRoomsByProperty(rooms: Room[], propertyId: string): Room[] {
+  return rooms.filter(room => room.propertyId === propertyId);
+}
+
+/**
+ * Get tenants by property ID
+ */
+export function getTenantsByProperty(tenants: Tenant[], propertyId: string): Tenant[] {
+  return tenants.filter(tenant => tenant.propertyId === propertyId);
 }
 
 /**

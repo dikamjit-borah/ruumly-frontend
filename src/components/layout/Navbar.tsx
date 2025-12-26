@@ -24,6 +24,9 @@ export function Navbar() {
               <Link href="/" className="text-gray-700 hover:text-gray-900 text-sm font-medium">
                 Dashboard
               </Link>
+              <Link href="/properties" className="text-gray-700 hover:text-gray-900 text-sm font-medium">
+                Properties
+              </Link>
               <Link href="/rooms" className="text-gray-700 hover:text-gray-900 text-sm font-medium">
                 Rooms
               </Link>

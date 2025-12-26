@@ -4,13 +4,27 @@
 
 import { z } from 'zod';
 
+export const PropertySchema = z.object({
+  name: z.string().min(1, 'Property name is required').max(200),
+  address: z.string().min(1, 'Address is required').max(300),
+  city: z.string().min(1, 'City is required').max(100),
+  state: z.string().min(1, 'State is required').max(100),
+  zipCode: z.string().min(1, 'Zip code is required').max(20),
+  type: z.enum(['apartment', 'house', 'condo', 'commercial']),
+  totalRooms: z.coerce.number().min(1, 'Total rooms must be at least 1'),
+  description: z.string().max(1000).optional(),
+  phoneNumber: z.string().max(20).optional(),
+  email: z.union([z.string().email(), z.literal('')]).optional(),
+});
+
 export const RoomSchema = z.object({
+  propertyId: z.string().min(1, 'Property is required'),
   number: z.string().min(1, 'Room number is required').max(50),
   type: z.enum(['single', 'double', 'studio', 'apartment']),
   status: z.enum(['available', 'occupied', 'maintenance']),
   rentAmount: z.coerce.number().positive('Rent amount must be positive'),
   floor: z.coerce.number().optional(),
-  amenities: z.string().optional().transform(val => val?.split(',').map(a => a.trim()).filter(Boolean) || []),
+  amenities: z.string().transform(val => val?.split(',').map(a => a.trim()).filter(Boolean) || []).optional(),
 });
 
 export const TenantSchema = z.object({
@@ -32,6 +46,7 @@ export const RentPaymentSchema = z.object({
   notes: z.string().max(500).optional(),
 });
 
+export type PropertyFormData = z.infer<typeof PropertySchema>;
 export type RoomFormData = z.infer<typeof RoomSchema>;
 export type TenantFormData = z.infer<typeof TenantSchema>;
 export type RentPaymentFormData = z.infer<typeof RentPaymentSchema>;
