@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Navbar } from "@/components/layout/Navbar";
 
 export const metadata: Metadata = {
-  title: "Ruumly - Modern & Minimalist",
-  description: "A beautiful, modern, and minimalist Next.js application",
+  title: "Ruumly - Property Management System",
+  description: "Rental property management system",
 };
 
 export default function RootLayout({
@@ -13,8 +14,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased">
-        {children}
+      <body className="antialiased bg-gray-50">
+        <Navbar />
+        <main className="min-h-screen">
+          {children}
+        </main>
       </body>
     </html>
   );
