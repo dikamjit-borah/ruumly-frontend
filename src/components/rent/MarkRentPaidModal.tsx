@@ -71,7 +71,7 @@ export function MarkRentPaidModal() {
         </div>
 
         <Input
-          label="Amount ($)"
+          label="Amount (₹)"
           type="number"
           placeholder="1000"
           {...register('amount')}
