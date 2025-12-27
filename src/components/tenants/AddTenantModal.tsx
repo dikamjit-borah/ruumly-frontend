@@ -12,7 +12,7 @@ import { useTenants } from '@/hooks/useTenants';
 import { useRooms } from '@/hooks/useRooms';
 
 export function AddTenantModal() {
-  const { showAddTenantModal, setShowAddTenantModal } = usePropertyStore();
+  const { showAddTenantModal, setShowAddTenantModal, selectedPropertyId } = usePropertyStore();
   const { addTenant } = useTenants();
   const { allRooms } = useRooms();
   const {
@@ -25,12 +25,17 @@ export function AddTenantModal() {
   });
 
   const onSubmit = (data: TenantFormData) => {
+    if (!selectedPropertyId) {
+      alert('Please select a property first');
+      return;
+    }
     addTenant({
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
       phone: data.phone,
       roomId: data.roomId,
+      propertyId: selectedPropertyId,
       moveInDate: data.moveInDate,
       moveOutDate: data.moveOutDate,
       isActive: true,

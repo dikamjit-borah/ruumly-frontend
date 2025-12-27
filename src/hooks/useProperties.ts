@@ -18,7 +18,7 @@ export function useProperties() {
   } = usePropertyStore();
 
   const filteredProperties = useMemo(() => {
-    return searchFilter(properties, searchTerm, ['name', 'city', 'address']);
+    return searchFilter<Property>(properties, searchTerm, ['name', 'city', 'address']);
   }, [properties, searchTerm]);
 
   const stats = useMemo(() => {

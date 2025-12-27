@@ -176,7 +176,7 @@ export function searchFilter<T extends Record<string, any>>(
 ): T[] {
   if (!searchTerm) return items;
   const lowerSearch = searchTerm.toLowerCase();
-  return items.filter(item =>
+  return items.filter((item: T) =>
     keys.some(key => {
       const value = item[key];
       return String(value).toLowerCase().includes(lowerSearch);
@@ -187,7 +187,7 @@ export function searchFilter<T extends Record<string, any>>(
 /**
  * Debounce function for optimizing frequent operations
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => unknown>(
   func: T,
   wait: number
 ): (...args: Parameters<T>) => void {

@@ -30,7 +30,7 @@ export function EditRoomModal() {
       setValue('status', selectedRoom.status);
       setValue('rentAmount', selectedRoom.rentAmount);
       setValue('floor', selectedRoom.floor);
-      setValue('amenities', selectedRoom.amenities?.join(', '));
+      setValue('amenities', (selectedRoom.amenities?.join(', ') || '') as unknown as RoomFormData['amenities']);
     }
   }, [selectedRoom, setValue]);
 

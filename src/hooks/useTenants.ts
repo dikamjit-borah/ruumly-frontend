@@ -19,7 +19,7 @@ export function useTenants() {
   } = usePropertyStore();
 
   const filteredTenants = useMemo(() => {
-    return searchFilter(tenants, searchTerm, ['firstName', 'lastName', 'email', 'phone']);
+    return searchFilter<Tenant>(tenants, searchTerm, ['firstName', 'lastName', 'email', 'phone']);
   }, [tenants, searchTerm]);
 
   const activeTenants = useMemo(() => {

@@ -19,7 +19,7 @@ export function useRooms() {
   } = usePropertyStore();
 
   const filteredRooms = useMemo(() => {
-    let result = searchFilter(rooms, searchTerm, ['number', 'type']);
+    let result = searchFilter<Room>(rooms, searchTerm, ['number', 'type']);
 
     if (filterStatus) {
       result = result.filter((room) => room.status === filterStatus);

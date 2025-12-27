@@ -28,13 +28,14 @@ export function MarkRentPaidModal() {
     const tenant = allTenants.find(t => t.id === data.tenantId);
     if (tenant) {
       addPayment({
-        tenantId: data.tenantId,
-        roomId: tenant.roomId,
-        amount: data.amount,
-        dueDate: new Date(),
-        paidDate: data.paidDate,
-        status: 'paid',
-        notes: data.notes,
+          tenantId: data.tenantId,
+          roomId: tenant.roomId,
+          amount: data.amount,
+          dueDate: new Date(),
+          paidDate: data.paidDate,
+          status: 'paid',
+          notes: data.notes,
+          propertyId: ''
       });
       reset();
       setShowMarkPaidModal(false);
