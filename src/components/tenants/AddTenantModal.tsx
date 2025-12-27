@@ -84,7 +84,7 @@ export function AddTenantModal() {
 
         <Input
           label="Phone"
-          placeholder="(123) 456-7890"
+          placeholder="9876543210"
           {...register('phone')}
           error={errors.phone?.message}
         />
@@ -123,7 +123,7 @@ export function AddTenantModal() {
           />
           <Input
             label="Contact Phone"
-            placeholder="(123) 456-7890"
+            placeholder="9876543210"
             {...register('emergencyContactPhone')}
           />
         </div>

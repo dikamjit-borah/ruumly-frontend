@@ -92,9 +92,9 @@ export function EditRoomModal() {
         </div>
 
         <Input
-          label="Rent Amount ($)"
+          label="Rent Amount (₹)"
           type="number"
-          placeholder="1000"
+          placeholder="5000"
           {...register('rentAmount')}
           error={errors.rentAmount?.message}
         />

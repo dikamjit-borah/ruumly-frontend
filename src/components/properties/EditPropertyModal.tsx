@@ -29,7 +29,7 @@ export function EditPropertyModal() {
         address: selectedProperty.address,
         city: selectedProperty.city,
         state: selectedProperty.state,
-        zipCode: selectedProperty.zipCode,
+        pinCode: selectedProperty.pinCode,
         type: selectedProperty.type,
         totalRooms: selectedProperty.totalRooms,
         description: selectedProperty.description,
@@ -46,7 +46,7 @@ export function EditPropertyModal() {
         address: data.address,
         city: data.city,
         state: data.state,
-        zipCode: data.zipCode,
+        pinCode: data.pinCode,
         type: data.type,
         totalRooms: data.totalRooms,
         description: data.description,
@@ -86,23 +86,23 @@ export function EditPropertyModal() {
         <div className="grid grid-cols-2 gap-4">
           <Input
             label="City"
-            placeholder="New York"
+            placeholder="Delhi"
             {...register('city')}
             error={errors.city?.message}
           />
           <Input
             label="State"
-            placeholder="NY"
+            placeholder="Delhi"
             {...register('state')}
             error={errors.state?.message}
           />
         </div>
 
         <Input
-          label="Zip Code"
-          placeholder="10001"
-          {...register('zipCode')}
-          error={errors.zipCode?.message}
+          label="Pin Code"
+          placeholder="110001"
+          {...register('pinCode')}
+          error={errors.pinCode?.message}
         />
 
         <div>

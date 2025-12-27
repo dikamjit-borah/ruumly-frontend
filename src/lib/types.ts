@@ -8,7 +8,7 @@ export interface Property {
   address: string;
   city: string;
   state: string;
-  zipCode: string;
+  pinCode: string;
   type: 'apartment' | 'house' | 'condo' | 'commercial';
   totalRooms: number;
   description?: string;
