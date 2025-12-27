@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useTenants } from '@/hooks/useTenants';
 import { usePropertyStore } from '@/lib/store';
 import { Card, CardHeader, CardContent } from '@/components/ui/Card';
@@ -9,11 +10,12 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { StatusBadge } from '@/components/layout/Logo';
 import { formatDate } from '@/lib/utils';
-import { Plus, Edit2, LogOut, Search } from 'lucide-react';
+import { Plus, LogOut, Search, Eye } from 'lucide-react';
 
 export function TenantListTable() {
+  const router = useRouter();
   const { tenants, stats, selectTenant } = useTenants();
-  const { setSearchTerm, setShowAddTenantModal, setShowEditRoomModal, setShowVacateTenantModal } = usePropertyStore();
+  const { setSearchTerm, setShowAddTenantModal, setShowVacateTenantModal } = usePropertyStore();
   const [searchInput, setSearchInput] = useState('');
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -21,9 +23,8 @@ export function TenantListTable() {
     setSearchTerm(e.target.value);
   };
 
-  const handleEdit = (tenant: any) => {
-    selectTenant(tenant);
-    setShowEditRoomModal(true);
+  const handleViewDetails = (tenantId: string) => {
+    router.push(`/tenants/${tenantId}`);
   };
 
   const handleVacate = (tenant: any) => {
@@ -77,22 +78,27 @@ export function TenantListTable() {
             </TableHead>
             <TableBody>
               {tenants.map((tenant) => (
-                <TableRow key={tenant.id}>
-                  <TableCell className="font-medium">{tenant.firstName} {tenant.lastName}</TableCell>
-                  <TableCell>{tenant.email}</TableCell>
-                  <TableCell>{tenant.phone}</TableCell>
-                  <TableCell>{formatDate(tenant.moveInDate)}</TableCell>
-                  <TableCell>
+                <TableRow key={tenant.id} className="cursor-pointer hover:bg-gray-50">
+                  <TableCell 
+                    className="font-medium"
+                    onClick={() => handleViewDetails(tenant.id)}
+                  >
+                    {tenant.firstName} {tenant.lastName}
+                  </TableCell>
+                  <TableCell onClick={() => handleViewDetails(tenant.id)}>{tenant.email}</TableCell>
+                  <TableCell onClick={() => handleViewDetails(tenant.id)}>{tenant.phone}</TableCell>
+                  <TableCell onClick={() => handleViewDetails(tenant.id)}>{formatDate(tenant.moveInDate)}</TableCell>
+                  <TableCell onClick={() => handleViewDetails(tenant.id)}>
                     <StatusBadge status={tenant.isActive ? 'active' : 'inactive'} />
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => handleEdit(tenant)}
+                        onClick={() => handleViewDetails(tenant.id)}
                         className="p-2 hover:bg-gray-100 rounded transition-colors"
-                        aria-label="Edit tenant"
+                        aria-label="View tenant details"
                       >
-                        <Edit2 size={18} className="text-blue-600" />
+                        <Eye size={18} className="text-green-600" />
                       </button>
                       {tenant.isActive && (
                         <button

@@ -46,6 +46,21 @@ export interface Tenant {
     name: string;
     phone: string;
   };
+  profilePicture?: string;
+  documents?: {
+    id: string;
+    type: 'aadhar' | 'pan' | 'office' | 'other';
+    name: string;
+    url: string;
+    uploadedAt: Date;
+  }[];
+  additionalMembers?: {
+    id: string;
+    name: string;
+    relation: string;
+    phone?: string;
+    age?: number;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }
