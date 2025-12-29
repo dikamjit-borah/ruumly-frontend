@@ -36,7 +36,7 @@ export default function SignInPage() {
 
   const callBackendSignIn = async (idToken: string) => {
     try {
-      const response = await fetch('https://ruumly-backend.onrender.com/api/auth/firebase-signin', {
+      const response = await fetch('https://ruumly-backend.onrender.com/api/auth/firebase/signin', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
