@@ -6,37 +6,129 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Building2 } from 'lucide-react';
+import { 
+  signInWithPopup, 
+  GoogleAuthProvider, 
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  AuthError
+} from 'firebase/auth';
+import { getFirebaseAuth } from '@/lib/firebase';
+import { useAuth } from '@/lib/auth-context';
+
+const googleProvider = new GoogleAuthProvider();
 
 export default function SignInPage() {
   const router = useRouter();
+  const { setUser } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const getAuth = () => {
+    const firebaseAuth = getFirebaseAuth();
+    if (!firebaseAuth) {
+      throw new Error('Firebase is not configured. Please check your environment variables.');
+    }
+    return firebaseAuth;
+  };
+
+  const callBackendSignIn = async (idToken: string) => {
+    try {
+      const response = await fetch('https://ruumly-backend.onrender.com/api/auth/firebase-signin', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ idToken }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Backend authentication failed');
+      }
+
+      const data = await response.json();
+      const { access_token, owner } = data;
+
+      // Store tokens and user data
+      localStorage.setItem('auth_token', access_token);
+      localStorage.setItem('user', JSON.stringify(owner));
+      document.cookie = `auth_token=${access_token}; path=/; max-age=86400`;
+
+      // Update auth context
+      setUser(owner);
+
+      // Redirect to dashboard
+      router.push('/dashboard');
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Backend authentication failed';
+      setError(errorMessage);
+      console.error('Backend sign in error:', err);
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      
-      // TODO: Integrate with actual Google OAuth
-      // For now, simulate a sign-in by storing a dummy auth token
-      const token = 'dummy_token_' + Date.now();
-      const user = {
-        id: 'user_' + Date.now(),
-        name: 'Demo User',
-        email: 'demo@example.com'
-      };
-      
-      localStorage.setItem('auth_token', token);
-      localStorage.setItem('user', JSON.stringify(user));
-      
-      // Set cookie for middleware
-      document.cookie = `auth_token=${token}; path=/; max-age=86400`;
-      
-      // Redirect to dashboard
-      router.push('/dashboard');
+
+      // Sign in with Google popup
+      const firebaseAuth = getAuth();
+      const result = await signInWithPopup(firebaseAuth, googleProvider);
+      const idToken = await result.user.getIdToken();
+
+      // Call backend to verify token and create/fetch user
+      await callBackendSignIn(idToken);
     } catch (err) {
-      setError('Failed to sign in. Please try again.');
-      console.error(err);
+      const firebaseError = err as AuthError;
+      setError(firebaseError.message || 'Failed to sign in with Google');
+      console.error('Google sign in error:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleEmailSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email || !password) {
+      setError('Please enter both email and password');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const firebaseAuth = getAuth();
+
+      // Sign in with email and password
+      const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
+      const idToken = await result.user.getIdToken();
+
+      // Call backend to verify token and create/fetch user
+      await callBackendSignIn(idToken);
+    } catch (err) {
+      const firebaseError = err as AuthError;
+      
+      // Handle specific Firebase error codes
+      if (firebaseError.code === 'auth/user-not-found') {
+        // Try to create a new account
+        try {
+          const firebaseAuth = getAuth();
+          const createResult = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+          const idToken = await createResult.user.getIdToken();
+          await callBackendSignIn(idToken);
+        } catch (createErr) {
+          const createError = createErr as AuthError;
+          setError(createError.message || 'Failed to create account');
+        }
+      } else {
+        setError(firebaseError.message || 'Failed to sign in');
+      }
+      console.error('Email sign in error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -99,32 +191,39 @@ export default function SignInPage() {
               </div>
             </div>
 
-            {/* Email Sign In (Demo) */}
-            <div className="space-y-4">
+            {/* Email Sign In */}
+            <form onSubmit={handleEmailSignIn} className="space-y-4">
               <Input
                 type="email"
                 placeholder="your@email.com"
                 className="w-full"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                disabled={isLoading}
               />
               <Input
                 type="password"
                 placeholder="Password"
                 className="w-full"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                disabled={isLoading}
               />
               <Button
+                type="submit"
                 className="w-full"
                 disabled={isLoading}
               >
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </Button>
-            </div>
+            </form>
           </div>
 
           {/* Footer */}
           <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-            <p>Don&apos;t have an account? <a href="#" className="text-blue-600 hover:underline">Create one</a></p>
+            <p>Don&apos;t have an account? <span className="text-blue-600">It will be created automatically on first sign in.</span></p>
             <p className="mt-4 text-xs text-gray-500">
-              For demo purposes, you can sign in with Google or use test credentials
+              Sign in with Google or email/password to get started
             </p>
           </div>
 
@@ -139,7 +238,7 @@ export default function SignInPage() {
         {/* Info Card */}
         <div className="mt-8 bg-white rounded-lg shadow p-6 text-center text-gray-600">
           <p className="text-sm">
-            <strong>Demo Mode:</strong> Sign in to explore the full features of Ruumly property management system.
+            <strong>Firebase Authentication:</strong> Securely sign in with Google or email to access your property management dashboard.
           </p>
         </div>
       </div>
