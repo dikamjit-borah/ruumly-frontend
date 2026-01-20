@@ -101,26 +101,25 @@ export function TenantDetailsModal() {
       isOpen={!!selectedTenant}
       onClose={handleClose}
       title={`${selectedTenant.firstName} ${selectedTenant.lastName}`}
-      size="lg"
     >
-      <div className="space-y-6 max-h-96 overflow-y-auto">
+      <div className="space-y-6 max-w-4xl">
         {/* Profile Picture Section */}
         <div className="flex flex-col items-center space-y-4">
-          <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+          <div className="w-40 h-40 rounded-lg bg-gray-200 flex items-center justify-center overflow-hidden shadow-md">
             {profilePicture ? (
               <Image 
                 src={profilePicture} 
                 alt="Profile" 
-                width={128}
-                height={128}
+                width={160}
+                height={160}
                 className="w-full h-full object-cover" 
               />
             ) : (
-              <span className="text-gray-400">No Photo</span>
+              <span className="text-gray-400 text-center">No Photo</span>
             )}
           </div>
           {isEditing && (
-            <label className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded cursor-pointer hover:bg-blue-100">
+            <label className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors">
               <Upload size={18} />
               Upload Photo
               <input
@@ -134,60 +133,63 @@ export function TenantDetailsModal() {
         </div>
 
         {/* Basic Details */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="text-sm font-medium text-gray-700">First Name</label>
-            <p className="mt-1 text-gray-900">{selectedTenant.firstName}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Last Name</label>
-            <p className="mt-1 text-gray-900">{selectedTenant.lastName}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Email</label>
-            <p className="mt-1 text-gray-900">{selectedTenant.email}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Phone</label>
-            <p className="mt-1 text-gray-900">{selectedTenant.phone}</p>
-          </div>
-          <div>
-            <label className="text-sm font-medium text-gray-700">Move In Date</label>
-            <p className="mt-1 text-gray-900">{formatDate(selectedTenant.moveInDate)}</p>
-          </div>
-          {selectedTenant.moveOutDate && (
+        <div className="border-t border-gray-200 pt-6">
+          <h3 className="text-sm font-semibold text-gray-900 mb-4">Personal Information</h3>
+          <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Move Out Date</label>
-              <p className="mt-1 text-gray-900">{formatDate(selectedTenant.moveOutDate)}</p>
+              <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">First Name</label>
+              <p className="mt-2 text-gray-900 font-medium">{selectedTenant.firstName}</p>
             </div>
-          )}
+            <div>
+              <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Last Name</label>
+              <p className="mt-2 text-gray-900 font-medium">{selectedTenant.lastName}</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Email</label>
+              <p className="mt-2 text-gray-900">{selectedTenant.email}</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Phone</label>
+              <p className="mt-2 text-gray-900">{selectedTenant.phone}</p>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Move In</label>
+              <p className="mt-2 text-gray-900">{formatDate(selectedTenant.moveInDate)}</p>
+            </div>
+            {selectedTenant.moveOutDate && (
+              <div>
+                <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Move Out</label>
+                <p className="mt-2 text-gray-900">{formatDate(selectedTenant.moveOutDate)}</p>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Emergency Contact */}
         {selectedTenant.emergencyContact && (
-          <div className="border-t pt-4">
-            <h3 className="font-semibold text-gray-900 mb-2">Emergency Contact</h3>
-            <div className="grid grid-cols-2 gap-4">
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-sm font-semibold text-gray-900 mb-4">Emergency Contact</h3>
+            <div className="grid grid-cols-2 gap-6">
               <div>
-                <label className="text-sm font-medium text-gray-700">Name</label>
-                <p className="mt-1 text-gray-900">{selectedTenant.emergencyContact.name}</p>
+                <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Name</label>
+                <p className="mt-2 text-gray-900 font-medium">{selectedTenant.emergencyContact.name}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700">Phone</label>
-                <p className="mt-1 text-gray-900">{selectedTenant.emergencyContact.phone}</p>
+                <label className="text-xs font-medium text-gray-700 uppercase tracking-wide">Phone</label>
+                <p className="mt-2 text-gray-900">{selectedTenant.emergencyContact.phone}</p>
               </div>
             </div>
           </div>
         )}
 
         {/* Documents Section */}
-        <div className="border-t pt-4">
+        <div className="border-t border-gray-200 pt-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Documents</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Documents</h3>
             {isEditing && (
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-wrap">
                 {(['aadhar', 'pan', 'office', 'other'] as const).map(docType => (
-                  <label key={docType} className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded cursor-pointer hover:bg-blue-100 capitalize">
+                  <label key={docType} className="flex items-center gap-1 px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors capitalize">
                     <Upload size={14} />
                     {docType}
                     <input
@@ -202,18 +204,18 @@ export function TenantDetailsModal() {
           </div>
           <div className="space-y-2">
             {documents.length === 0 ? (
-              <p className="text-gray-500 text-sm">No documents uploaded</p>
+              <p className="text-gray-500 text-sm py-4">No documents uploaded</p>
             ) : (
               documents.map(doc => (
-                <div key={doc.id} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                  <div>
+                <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
+                  <div className="flex-1">
                     <p className="text-sm font-medium capitalize text-gray-900">{doc.type} - {doc.name}</p>
-                    <p className="text-xs text-gray-500">Uploaded: {formatDate(doc.uploadedAt)}</p>
+                    <p className="text-xs text-gray-500 mt-1">Uploaded: {formatDate(doc.uploadedAt)}</p>
                   </div>
                   {isEditing && (
                     <button
                       onClick={() => handleRemoveDocument(doc.id)}
-                      className="p-1 hover:bg-red-100 rounded text-red-600"
+                      className="p-2 hover:bg-red-100 rounded-lg text-red-600 transition-colors ml-2"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -225,13 +227,13 @@ export function TenantDetailsModal() {
         </div>
 
         {/* Additional Members Section */}
-        <div className="border-t pt-4">
+        <div className="border-t border-gray-200 pt-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-gray-900">Additional Members</h3>
+            <h3 className="text-sm font-semibold text-gray-900">Additional Members</h3>
             {isEditing && additionalMembers.length < 5 && (
               <button
                 onClick={() => {}}
-                className="flex items-center gap-1 px-2 py-1 text-xs bg-blue-50 text-blue-600 rounded hover:bg-blue-100"
+                className="flex items-center gap-1 px-3 py-1.5 text-xs bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
               >
                 <Plus size={14} />
                 Add Member
@@ -240,7 +242,7 @@ export function TenantDetailsModal() {
           </div>
 
           {isEditing && (
-            <div className="mb-4 p-3 bg-gray-50 rounded space-y-2">
+            <div className="mb-4 p-4 bg-blue-50 rounded-lg space-y-3 border border-blue-200">
               <Input
                 placeholder="Member Name"
                 value={newMember.name || ''}
@@ -251,7 +253,7 @@ export function TenantDetailsModal() {
                 value={newMember.relation || ''}
                 onChange={(e) => setNewMember({ ...newMember, relation: e.target.value })}
               />
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 gap-3">
                 <Input
                   placeholder="Phone (optional)"
                   value={newMember.phone || ''}
@@ -276,20 +278,20 @@ export function TenantDetailsModal() {
 
           <div className="space-y-2">
             {additionalMembers.length === 0 ? (
-              <p className="text-gray-500 text-sm">No additional members added</p>
+              <p className="text-gray-500 text-sm py-4">No additional members added</p>
             ) : (
               additionalMembers.map(member => (
-                <div key={member.id} className="flex items-start justify-between p-3 bg-gray-50 rounded">
+                <div key={member.id} className="flex items-start justify-between p-3 bg-gray-50 rounded-lg border border-gray-200">
                   <div className="flex-1">
                     <p className="font-medium text-gray-900">{member.name}</p>
                     <p className="text-sm text-gray-600">{member.relation}</p>
-                    {member.phone && <p className="text-xs text-gray-500">{member.phone}</p>}
+                    {member.phone && <p className="text-xs text-gray-500 mt-1">{member.phone}</p>}
                     {member.age && <p className="text-xs text-gray-500">Age: {member.age}</p>}
                   </div>
                   {isEditing && (
                     <button
                       onClick={() => handleRemoveMember(member.id)}
-                      className="p-1 hover:bg-red-100 rounded text-red-600 ml-2"
+                      className="p-2 hover:bg-red-100 rounded-lg text-red-600 transition-colors ml-2"
                     >
                       <X size={16} />
                     </button>
@@ -301,7 +303,7 @@ export function TenantDetailsModal() {
         </div>
       </div>
 
-      <div className="flex gap-2 justify-end pt-4 border-t mt-6">
+      <div className="flex gap-3 justify-end pt-6 border-t border-gray-200 mt-6 sticky bottom-0 bg-white pb-6">
         {isEditing && (
           <Button
             type="button"
@@ -312,17 +314,24 @@ export function TenantDetailsModal() {
               setDocuments(selectedTenant.documents || []);
               setAdditionalMembers(selectedTenant.additionalMembers || []);
             }}
+            className="px-6"
           >
             Cancel
           </Button>
         )}
         {!isEditing && (
-          <Button onClick={() => setIsEditing(true)}>
+          <Button 
+            onClick={() => setIsEditing(true)}
+            className="px-6"
+          >
             Edit Details
           </Button>
         )}
         {isEditing && (
-          <Button onClick={handleSave}>
+          <Button 
+            onClick={handleSave}
+            className="px-6"
+          >
             Save Changes
           </Button>
         )}
@@ -330,6 +339,7 @@ export function TenantDetailsModal() {
           type="button"
           variant="secondary"
           onClick={handleClose}
+          className="px-6"
         >
           Close
         </Button>

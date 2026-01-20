@@ -25,24 +25,48 @@ export function VacateTenantModal() {
       onClose={() => setShowVacateTenantModal(false)}
       title="Vacate Tenant"
     >
-      <div className="space-y-4">
-        <p className="text-gray-700">
-          Are you sure you want to vacate <strong>{selectedTenant.firstName} {selectedTenant.lastName}</strong>?
-        </p>
-        <p className="text-sm text-gray-600">
-          This will mark the tenant as inactive and set their room as available.
-        </p>
+      <div className="space-y-6 max-w-2xl">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+          <h3 className="font-semibold text-amber-900 mb-2">Confirm Tenant Vacation</h3>
+          <p className="text-amber-800">
+            You are about to vacate <strong>{selectedTenant.firstName} {selectedTenant.lastName}</strong>.
+          </p>
+        </div>
 
-        <div className="flex gap-2 justify-end pt-4 border-t">
+        <div className="space-y-3 text-sm text-gray-700">
+          <p className="font-medium text-gray-900">This action will:</p>
+          <ul className="space-y-2 ml-4">
+            <li className="flex items-start gap-3">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>Mark the tenant as inactive</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>Set their room as available</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="text-blue-600 mt-1">•</span>
+              <span>Close any pending rent records</span>
+            </li>
+          </ul>
+        </div>
+
+        <div className="flex gap-3 justify-end pt-6 border-t border-gray-200 sticky bottom-0 bg-white pb-6">
           <Button
             type="button"
             variant="secondary"
             onClick={() => setShowVacateTenantModal(false)}
+            className="px-6"
           >
             Cancel
           </Button>
-          <Button type="button" variant="danger" onClick={handleVacate}>
-            Vacate Tenant
+          <Button 
+            type="button" 
+            variant="danger" 
+            onClick={handleVacate}
+            className="px-6"
+          >
+            Confirm Vacation
           </Button>
         </div>
       </div>
